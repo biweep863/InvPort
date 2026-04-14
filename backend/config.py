@@ -1,0 +1,65 @@
+"""Configuration constants for the portfolio optimizer."""
+
+RISK_FREE_RATE = 0.05
+DEFAULT_HISTORY_PERIOD = "2y"
+TRADING_DAYS_PER_YEAR = 252
+
+RISK_PROFILES = {
+    "bajo": {"target_volatility": 0.10, "label": "Conservador"},
+    "medio": {"target_volatility": 0.18, "label": "Balanceado"},
+    "alto": {"target_volatility": 0.30, "label": "Agresivo"},
+}
+
+# Curated list of popular S&P 500 stocks (ticker -> display name)
+SP500_TICKERS = {
+    "AAPL": "Apple Inc.",
+    "MSFT": "Microsoft Corp.",
+    "AMZN": "Amazon.com Inc.",
+    "GOOGL": "Alphabet Inc. (Google)",
+    "META": "Meta Platforms Inc.",
+    "NVDA": "NVIDIA Corp.",
+    "TSLA": "Tesla Inc.",
+    "BRK-B": "Berkshire Hathaway",
+    "JPM": "JPMorgan Chase & Co.",
+    "V": "Visa Inc.",
+    "JNJ": "Johnson & Johnson",
+    "WMT": "Walmart Inc.",
+    "PG": "Procter & Gamble",
+    "MA": "Mastercard Inc.",
+    "UNH": "UnitedHealth Group",
+    "HD": "Home Depot Inc.",
+    "DIS": "Walt Disney Co.",
+    "PYPL": "PayPal Holdings",
+    "NFLX": "Netflix Inc.",
+    "ADBE": "Adobe Inc.",
+    "CRM": "Salesforce Inc.",
+    "INTC": "Intel Corp.",
+    "AMD": "Advanced Micro Devices",
+    "PEP": "PepsiCo Inc.",
+    "KO": "Coca-Cola Co.",
+    "COST": "Costco Wholesale",
+    "ABBV": "AbbVie Inc.",
+    "MRK": "Merck & Co.",
+    "TMO": "Thermo Fisher Scientific",
+    "AVGO": "Broadcom Inc.",
+    "LLY": "Eli Lilly & Co.",
+    "ORCL": "Oracle Corp.",
+    "ACN": "Accenture plc",
+    "MCD": "McDonald's Corp.",
+    "T": "AT&T Inc.",
+    "LOW": "Lowe's Companies",
+    "NEE": "NextEra Energy",
+    "UPS": "United Parcel Service",
+    "BA": "Boeing Co.",
+    "CAT": "Caterpillar Inc.",
+    "GS": "Goldman Sachs Group",
+    "BLK": "BlackRock Inc.",
+    "AMGN": "Amgen Inc.",
+    "SBUX": "Starbucks Corp.",
+    "GE": "GE Aerospace",
+    "ISRG": "Intuitive Surgical",
+    "NOW": "ServiceNow Inc.",
+    "UBER": "Uber Technologies",
+    "SPOT": "Spotify Technology",
+    "SQ": "Block Inc. (Square)",
+}
