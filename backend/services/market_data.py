@@ -5,7 +5,7 @@ import pandas as pd
 import yfinance as yf
 from cachetools import TTLCache
 
-from InvPort.backend.config import DEFAULT_HISTORY_PERIOD, TRADING_DAYS_PER_YEAR
+from InvPort.backend.config import BENCHMARK_TICKER, DEFAULT_HISTORY_PERIOD, TRADING_DAYS_PER_YEAR
 
 # Cache: max 100 entries, 1-hour TTL
 _price_cache = TTLCache(maxsize=100, ttl=3600)
@@ -30,9 +30,20 @@ def fetch_historical(tickers: list[str], period: str = DEFAULT_HISTORY_PERIOD) -
     return prices
 
 
+def fetch_benchmark(period: str = DEFAULT_HISTORY_PERIOD) -> pd.Series:
+    """Fetch SPY benchmark prices."""
+    prices = fetch_historical([BENCHMARK_TICKER], period=period)
+    return prices[BENCHMARK_TICKER]
+
+
 def compute_returns(prices: pd.DataFrame) -> pd.DataFrame:
     """Compute daily log returns."""
     return np.log(prices / prices.shift(1)).dropna()
+
+
+def compute_simple_returns(prices: pd.DataFrame) -> pd.DataFrame:
+    """Compute daily simple returns."""
+    return prices.pct_change().dropna()
 
 
 def compute_stats(returns: pd.DataFrame) -> tuple[np.ndarray, np.ndarray]:

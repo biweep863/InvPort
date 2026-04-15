@@ -2,8 +2,15 @@
 
 from fastapi import APIRouter
 
-from InvPort.backend.models.schemas import OptimizeRequest, OptimizeResponse, SimulateRequest, SimulateResponse
-from InvPort.backend.services.optimizer import run_optimization, run_simulation
+from InvPort.backend.models.schemas import (
+    BacktestRequest,
+    BacktestResponse,
+    OptimizeRequest,
+    OptimizeResponse,
+    SimulateRequest,
+    SimulateResponse,
+)
+from InvPort.backend.services.optimizer import run_optimization, run_simulation, run_backtest_service
 
 router = APIRouter(prefix="/api", tags=["optimize"])
 
@@ -18,3 +25,9 @@ async def optimize(req: OptimizeRequest):
 async def simulate(req: SimulateRequest):
     """Run Monte Carlo simulation on a portfolio."""
     return run_simulation(req)
+
+
+@router.post("/backtest", response_model=BacktestResponse)
+async def backtest(req: BacktestRequest):
+    """Run historical backtest on a portfolio."""
+    return run_backtest_service(req)

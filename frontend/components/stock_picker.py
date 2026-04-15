@@ -3,20 +3,24 @@
 import streamlit as st
 
 POPULAR_GROUPS = {
-    "🏆 FAANG+": ["AAPL", "AMZN", "META", "NFLX", "GOOGL", "MSFT"],
-    "💻 Tech": ["NVDA", "AMD", "INTC", "ADBE", "CRM", "NOW"],
-    "🏦 Finanzas": ["JPM", "V", "MA", "GS", "BLK"],
-    "🏥 Salud": ["JNJ", "UNH", "ABBV", "MRK", "LLY", "AMGN"],
-    "🛒 Consumo": ["WMT", "COST", "PG", "KO", "PEP", "MCD", "SBUX"],
+    "FAANG+": ["AAPL", "AMZN", "META", "NFLX", "GOOGL", "MSFT"],
+    "Semiconductores": ["NVDA", "AMD", "INTC", "AVGO", "QCOM", "TXN", "MU"],
+    "Software": ["ADBE", "CRM", "NOW", "ORCL", "PANW", "CRWD"],
+    "Finanzas": ["JPM", "GS", "MS", "BAC", "BLK", "AXP"],
+    "Pagos": ["V", "MA", "PYPL", "SQ"],
+    "Salud": ["JNJ", "UNH", "LLY", "ABBV", "MRK", "PFE", "AMGN"],
+    "Consumo": ["WMT", "COST", "PG", "KO", "PEP", "MCD", "SBUX", "NKE"],
+    "Energia": ["XOM", "CVX", "COP", "SLB", "EOG"],
+    "Industrial": ["BA", "CAT", "GE", "HON", "DE", "LMT"],
 }
 
 
 def render_stock_picker(available_tickers: dict[str, str]) -> list[str]:
     """Render stock picker with quick-select groups and multiselect."""
-    st.subheader("📊 Selecciona tus Acciones")
+    st.subheader("Selecciona tus Acciones")
 
     # Quick select groups
-    st.write("**Selección rápida por sector:**")
+    st.write("**Seleccion rapida por sector:**")
     cols = st.columns(len(POPULAR_GROUPS))
     for col, (group_name, tickers) in zip(cols, POPULAR_GROUPS.items()):
         with col:

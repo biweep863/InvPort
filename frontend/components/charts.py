@@ -8,7 +8,6 @@ import pandas as pd
 
 def allocation_pie_chart(allocations: list[dict]) -> go.Figure:
     """Create a donut chart of portfolio allocation."""
-    # Filter out near-zero allocations
     filtered = [a for a in allocations if a["weight"] > 0.01]
     labels = [f"{a['ticker']} ({a['weight']*100:.1f}%)" for a in filtered]
     values = [a["weight"] for a in filtered]
@@ -21,7 +20,7 @@ def allocation_pie_chart(allocations: list[dict]) -> go.Figure:
         marker=dict(colors=px.colors.qualitative.Set2),
     )])
     fig.update_layout(
-        title="Distribución del Portafolio",
+        title="Distribucion del Portafolio",
         showlegend=True,
         height=450,
     )
@@ -36,7 +35,6 @@ def efficient_frontier_chart(
     """Plot the efficient frontier with the optimal portfolio highlighted."""
     fig = go.Figure()
 
-    # Frontier curve
     vols = [p["volatility"] * 100 for p in frontier]
     rets = [p["expected_return"] * 100 for p in frontier]
     fig.add_trace(go.Scatter(
@@ -46,12 +44,11 @@ def efficient_frontier_chart(
         line=dict(color="royalblue", width=2),
     ))
 
-    # Optimal point
     fig.add_trace(go.Scatter(
         x=[optimal_point["volatility"] * 100],
         y=[optimal_point["expected_return"] * 100],
         mode="markers",
-        name=f"Óptimo ({optimal_point.get('method', 'markowitz')})",
+        name=f"Optimo ({optimal_point.get('method', 'markowitz')})",
         marker=dict(color="gold", size=16, symbol="star", line=dict(width=2, color="black")),
     ))
 
@@ -60,7 +57,7 @@ def efficient_frontier_chart(
             x=[comparison_point["volatility"] * 100],
             y=[comparison_point["expected_return"] * 100],
             mode="markers",
-            name=f"Óptimo ({comparison_point.get('method', 'genetic')})",
+            name=f"Optimo ({comparison_point.get('method', 'genetic')})",
             marker=dict(color="red", size=14, symbol="diamond", line=dict(width=2, color="black")),
         ))
 
@@ -87,7 +84,7 @@ def correlation_heatmap(correlation_matrix: pd.DataFrame) -> go.Figure:
         textfont={"size": 10},
     ))
     fig.update_layout(
-        title="Matriz de Correlación",
+        title="Matriz de Correlacion",
         height=500,
         template="plotly_white",
     )
@@ -100,7 +97,6 @@ def monte_carlo_fan_chart(percentiles: dict, days: int, investment: float) -> go
 
     fig = go.Figure()
 
-    # 5-95 percentile band
     fig.add_trace(go.Scatter(
         x=x + x[::-1],
         y=percentiles["p95"] + percentiles["p5"][::-1],
@@ -110,7 +106,6 @@ def monte_carlo_fan_chart(percentiles: dict, days: int, investment: float) -> go
         name="Rango 5%-95%",
     ))
 
-    # 25-75 percentile band
     fig.add_trace(go.Scatter(
         x=x + x[::-1],
         y=percentiles["p75"] + percentiles["p25"][::-1],
@@ -120,7 +115,6 @@ def monte_carlo_fan_chart(percentiles: dict, days: int, investment: float) -> go
         name="Rango 25%-75%",
     ))
 
-    # Median line
     fig.add_trace(go.Scatter(
         x=x,
         y=percentiles["p50"],
@@ -129,19 +123,91 @@ def monte_carlo_fan_chart(percentiles: dict, days: int, investment: float) -> go
         line=dict(color="royalblue", width=2),
     ))
 
-    # Initial investment line
     fig.add_hline(
         y=investment,
         line_dash="dash",
         line_color="red",
-        annotation_text=f"Inversión Inicial: ${investment:,.0f}",
+        annotation_text=f"Inversion Inicial: ${investment:,.0f}",
     )
 
     fig.update_layout(
-        title="Simulación Monte Carlo - Evolución del Portafolio",
-        xaxis_title="Días",
+        title="Simulacion Monte Carlo - Evolucion del Portafolio",
+        xaxis_title="Dias",
         yaxis_title="Valor del Portafolio (USD)",
         height=500,
+        template="plotly_white",
+    )
+    return fig
+
+
+def risk_contribution_chart(tickers: list[str], contributions: list[float]) -> go.Figure:
+    """Bar chart showing each stock's contribution to portfolio risk."""
+    # Filter out near-zero contributions
+    data = [(t, c) for t, c in zip(tickers, contributions) if abs(c) > 0.001]
+    data.sort(key=lambda x: x[1], reverse=True)
+
+    fig = go.Figure(data=[go.Bar(
+        x=[d[0] for d in data],
+        y=[d[1] * 100 for d in data],
+        marker_color=["#e74c3c" if d[1] > 0.15 else "#3498db" for d in data],
+    )])
+    fig.update_layout(
+        title="Contribucion al Riesgo por Accion",
+        xaxis_title="Accion",
+        yaxis_title="Contribucion al Riesgo (%)",
+        height=400,
+        template="plotly_white",
+    )
+    return fig
+
+
+def backtest_chart(dates: list[str], portfolio_values: list[float], benchmark_values: list[float]) -> go.Figure:
+    """Line chart comparing portfolio vs benchmark performance."""
+    fig = go.Figure()
+
+    fig.add_trace(go.Scatter(
+        x=dates, y=portfolio_values,
+        mode="lines",
+        name="Portafolio",
+        line=dict(color="royalblue", width=2),
+    ))
+
+    fig.add_trace(go.Scatter(
+        x=dates, y=benchmark_values,
+        mode="lines",
+        name="SPY (Benchmark)",
+        line=dict(color="gray", width=1.5, dash="dot"),
+    ))
+
+    fig.update_layout(
+        title="Rendimiento Historico: Portafolio vs SPY",
+        xaxis_title="Fecha",
+        yaxis_title="Valor (USD)",
+        height=500,
+        template="plotly_white",
+        hovermode="x unified",
+    )
+    return fig
+
+
+def drawdown_chart(dates: list[str], drawdown_series: list[float]) -> go.Figure:
+    """Area chart showing portfolio drawdown over time."""
+    dd_pct = [-d * 100 for d in drawdown_series]
+
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(
+        x=dates, y=dd_pct,
+        fill="tozeroy",
+        fillcolor="rgba(231, 76, 60, 0.3)",
+        line=dict(color="#e74c3c", width=1),
+        name="Drawdown",
+    ))
+
+    fig.update_layout(
+        title="Drawdown Historico",
+        xaxis_title="Fecha",
+        yaxis_title="Drawdown (%)",
+        height=350,
         template="plotly_white",
     )
     return fig

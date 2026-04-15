@@ -3,7 +3,7 @@
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
 
 import streamlit as st
 import pandas as pd
@@ -14,20 +14,19 @@ from InvPort.frontend.components.charts import (
     allocation_pie_chart,
     efficient_frontier_chart,
     correlation_heatmap,
+    risk_contribution_chart,
 )
 
-st.set_page_config(page_title="Resultados - Optimizador", page_icon="📈", layout="wide")
-st.title("📈 Resultados de Optimización")
+st.set_page_config(page_title="Resultados - Optimizador", layout="wide")
+st.title("Resultados de Optimizacion")
 
-# Check for results
 if "optimization_result" not in st.session_state:
-    st.warning("⚠️ No hay resultados aún. Ve a la página **Selección** y ejecuta una optimización primero.")
+    st.warning("No hay resultados aun. Ve a la pagina Seleccion y ejecuta una optimizacion primero.")
     st.stop()
 
 data = st.session_state["optimization_result"]
 investment = st.session_state.get("investment_amount", 10000)
 
-# Handle both single result and comparison
 if isinstance(data, list):
     results = data
 else:
@@ -35,25 +34,52 @@ else:
 
 for idx, result in enumerate(results):
     if len(results) > 1:
-        st.markdown(f"### Método: {'Markowitz' if result['method'] == 'markowitz' else 'Algoritmo Genético'}")
+        st.markdown(f"### Metodo: {'Markowitz' if result['method'] == 'markowitz' else 'Algoritmo Genetico'}")
 
-    # --- Summary Metrics ---
-    col1, col2, col3 = st.columns(3)
+    # --- Primary Metrics ---
+    col1, col2, col3, col4 = st.columns(4)
     with col1:
-        st.metric(
-            "Retorno Esperado Anual",
-            f"{result['portfolio_return'] * 100:.2f}%",
-        )
+        st.metric("Retorno Esperado Anual", f"{result['portfolio_return'] * 100:.2f}%")
     with col2:
-        st.metric(
-            "Volatilidad Anual",
-            f"{result['portfolio_volatility'] * 100:.2f}%",
-        )
+        st.metric("Volatilidad Anual", f"{result['portfolio_volatility'] * 100:.2f}%")
     with col3:
-        st.metric(
-            "Ratio de Sharpe",
-            f"{result['sharpe_ratio']:.3f}",
-        )
+        st.metric("Ratio de Sharpe", f"{result['sharpe_ratio']:.3f}")
+    with col4:
+        metrics = result.get("metrics")
+        if metrics:
+            st.metric("Ratio de Sortino", f"{metrics['sortino_ratio']:.3f}")
+
+    # --- Extended Metrics ---
+    if metrics:
+        st.markdown("---")
+        st.subheader("Metricas Avanzadas")
+
+        col1, col2, col3, col4 = st.columns(4)
+        with col1:
+            st.metric("Max Drawdown", f"{metrics['max_drawdown'] * 100:.2f}%")
+            st.caption("Mayor caida desde un maximo historico")
+        with col2:
+            st.metric("CVaR 95%", f"{metrics['cvar_95'] * 100:.2f}%")
+            st.caption("Perdida esperada en el peor 5% de dias")
+        with col3:
+            st.metric("Beta (vs SPY)", f"{metrics['beta']:.3f}")
+            st.caption("Sensibilidad al mercado (1.0 = igual al mercado)")
+        with col4:
+            st.metric("Alpha (Jensen)", f"{metrics['alpha'] * 100:.2f}%")
+            st.caption("Retorno por encima de lo que CAPM predice")
+
+        col5, col6, col7, col8 = st.columns(4)
+        with col5:
+            st.metric("Ratio Calmar", f"{metrics['calmar_ratio']:.3f}")
+            st.caption("Retorno ajustado por max drawdown")
+        with col6:
+            st.metric("Ratio Treynor", f"{metrics['treynor_ratio']:.3f}")
+            st.caption("Retorno por unidad de riesgo sistematico")
+        with col7:
+            st.metric("Information Ratio", f"{metrics['information_ratio']:.3f}")
+            st.caption("Retorno activo por unidad de tracking error")
+        with col8:
+            pass  # empty column for alignment
 
     st.markdown("---")
 
@@ -67,7 +93,7 @@ for idx, result in enumerate(results):
         st.plotly_chart(fig_pie, use_container_width=True)
 
     with col_table:
-        st.subheader("📋 Detalle de Asignación")
+        st.subheader("Detalle de Asignacion")
         df = pd.DataFrame([
             {
                 "Ticker": a["ticker"],
@@ -79,6 +105,17 @@ for idx, result in enumerate(results):
             for a in allocations if a["weight"] > 0.001
         ])
         st.dataframe(df, use_container_width=True, hide_index=True)
+
+    # --- Risk Contributions ---
+    if metrics and metrics.get("risk_contributions"):
+        st.markdown("---")
+        st.subheader("Contribucion al Riesgo")
+        filtered_alloc = [a for a in allocations if a["weight"] > 0.001]
+        rc = metrics["risk_contributions"]
+        tickers_rc = [a["ticker"] for a in filtered_alloc]
+        rc_filtered = rc[:len(tickers_rc)]
+        fig_rc = risk_contribution_chart(tickers_rc, rc_filtered)
+        st.plotly_chart(fig_rc, use_container_width=True)
 
     # --- Efficient Frontier ---
     if result.get("efficient_frontier"):
@@ -109,7 +146,7 @@ for idx, result in enumerate(results):
 
 # --- Correlation Heatmap ---
 st.markdown("---")
-st.subheader("🔥 Matriz de Correlación")
+st.subheader("Matriz de Correlacion")
 tickers = st.session_state.get("selected_tickers", [])
 if tickers:
     with st.spinner("Calculando correlaciones..."):
@@ -134,7 +171,7 @@ if results:
     ])
     csv = export_data.to_csv(index=False)
     st.download_button(
-        "📥 Descargar Asignación (CSV)",
+        "Descargar Asignacion (CSV)",
         data=csv,
         file_name="portfolio_allocation.csv",
         mime="text/csv",

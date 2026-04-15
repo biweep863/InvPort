@@ -3,8 +3,9 @@
 from fastapi import APIRouter, Query
 
 from InvPort.backend.config import SP500_TICKERS
-from InvPort.backend.models.schemas import StockInfo
+from InvPort.backend.models.schemas import StockAnalysis, StockInfo
 from InvPort.backend.services.market_data import fetch_historical
+from InvPort.backend.services.optimizer import analyze_stocks
 
 router = APIRouter(prefix="/api/stocks", tags=["stocks"])
 
@@ -32,3 +33,9 @@ async def stock_history(ticker: str, period: str = "2y"):
             "close": round(float(row.iloc[0]), 2),
         })
     return {"ticker": ticker, "history": records}
+
+
+@router.post("/analyze", response_model=list[StockAnalysis])
+async def analyze(tickers: list[str]):
+    """Analyze individual stocks: return, volatility, beta, drawdown, etc."""
+    return analyze_stocks(tickers)
