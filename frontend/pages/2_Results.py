@@ -17,11 +17,11 @@ from InvPort.frontend.components.charts import (
     risk_contribution_chart,
 )
 
-st.set_page_config(page_title="Resultados - Optimizador", layout="wide")
-st.title("Resultados de Optimizacion")
+st.set_page_config(page_title="Results - Optimizer", layout="wide")
+st.title("Optimization Results")
 
 if "optimization_result" not in st.session_state:
-    st.warning("No hay resultados aun. Ve a la pagina Seleccion y ejecuta una optimizacion primero.")
+    st.warning("No results yet. Go to the Selection page and run an optimization first.")
     st.stop()
 
 data = st.session_state["optimization_result"]
@@ -34,50 +34,50 @@ else:
 
 for idx, result in enumerate(results):
     if len(results) > 1:
-        st.markdown(f"### Metodo: {'Markowitz' if result['method'] == 'markowitz' else 'Algoritmo Genetico'}")
+        st.markdown(f"### Method: {'Markowitz' if result['method'] == 'markowitz' else 'Genetic Algorithm'}")
 
     # --- Primary Metrics ---
     col1, col2, col3, col4 = st.columns(4)
     with col1:
-        st.metric("Retorno Esperado Anual", f"{result['portfolio_return'] * 100:.2f}%")
+        st.metric("Expected Annual Return", f"{result['portfolio_return'] * 100:.2f}%")
     with col2:
-        st.metric("Volatilidad Anual", f"{result['portfolio_volatility'] * 100:.2f}%")
+        st.metric("Annual Volatility", f"{result['portfolio_volatility'] * 100:.2f}%")
     with col3:
-        st.metric("Ratio de Sharpe", f"{result['sharpe_ratio']:.3f}")
+        st.metric("Sharpe Ratio", f"{result['sharpe_ratio']:.3f}")
     with col4:
         metrics = result.get("metrics")
         if metrics:
-            st.metric("Ratio de Sortino", f"{metrics['sortino_ratio']:.3f}")
+            st.metric("Sortino Ratio", f"{metrics['sortino_ratio']:.3f}")
 
     # --- Extended Metrics ---
     if metrics:
         st.markdown("---")
-        st.subheader("Metricas Avanzadas")
+        st.subheader("Advanced Metrics")
 
         col1, col2, col3, col4 = st.columns(4)
         with col1:
             st.metric("Max Drawdown", f"{metrics['max_drawdown'] * 100:.2f}%")
-            st.caption("Mayor caida desde un maximo historico")
+            st.caption("Largest drop from a historical peak")
         with col2:
             st.metric("CVaR 95%", f"{metrics['cvar_95'] * 100:.2f}%")
-            st.caption("Perdida esperada en el peor 5% de dias")
+            st.caption("Expected loss in the worst 5% of days")
         with col3:
             st.metric("Beta (vs SPY)", f"{metrics['beta']:.3f}")
-            st.caption("Sensibilidad al mercado (1.0 = igual al mercado)")
+            st.caption("Market sensitivity (1.0 = same as market)")
         with col4:
             st.metric("Alpha (Jensen)", f"{metrics['alpha'] * 100:.2f}%")
-            st.caption("Retorno por encima de lo que CAPM predice")
+            st.caption("Return above what CAPM predicts")
 
         col5, col6, col7, col8 = st.columns(4)
         with col5:
-            st.metric("Ratio Calmar", f"{metrics['calmar_ratio']:.3f}")
-            st.caption("Retorno ajustado por max drawdown")
+            st.metric("Calmar Ratio", f"{metrics['calmar_ratio']:.3f}")
+            st.caption("Return adjusted for max drawdown")
         with col6:
-            st.metric("Ratio Treynor", f"{metrics['treynor_ratio']:.3f}")
-            st.caption("Retorno por unidad de riesgo sistematico")
+            st.metric("Treynor Ratio", f"{metrics['treynor_ratio']:.3f}")
+            st.caption("Return per unit of systematic risk")
         with col7:
             st.metric("Information Ratio", f"{metrics['information_ratio']:.3f}")
-            st.caption("Retorno activo por unidad de tracking error")
+            st.caption("Active return per unit of tracking error")
         with col8:
             pass  # empty column for alignment
 
@@ -93,14 +93,14 @@ for idx, result in enumerate(results):
         st.plotly_chart(fig_pie, use_container_width=True)
 
     with col_table:
-        st.subheader("Detalle de Asignacion")
+        st.subheader("Allocation Details")
         df = pd.DataFrame([
             {
                 "Ticker": a["ticker"],
-                "Empresa": a["company_name"],
-                "Peso (%)": f"{a['weight'] * 100:.2f}",
-                "Monto (USD)": f"${a['amount']:,.2f}",
-                "Retorno Ind. (%)": f"{a['expected_return'] * 100:.2f}",
+                "Company": a["company_name"],
+                "Weight (%)": f"{a['weight'] * 100:.2f}",
+                "Amount (USD)": f"${a['amount']:,.2f}",
+                "Ind. Return (%)": f"{a['expected_return'] * 100:.2f}",
             }
             for a in allocations if a["weight"] > 0.001
         ])
@@ -109,7 +109,7 @@ for idx, result in enumerate(results):
     # --- Risk Contributions ---
     if metrics and metrics.get("risk_contributions"):
         st.markdown("---")
-        st.subheader("Contribucion al Riesgo")
+        st.subheader("Risk Contribution")
         filtered_alloc = [a for a in allocations if a["weight"] > 0.001]
         rc = metrics["risk_contributions"]
         tickers_rc = [a["ticker"] for a in filtered_alloc]
@@ -146,10 +146,10 @@ for idx, result in enumerate(results):
 
 # --- Correlation Heatmap ---
 st.markdown("---")
-st.subheader("Matriz de Correlacion")
+st.subheader("Correlation Matrix")
 tickers = st.session_state.get("selected_tickers", [])
 if tickers:
-    with st.spinner("Calculando correlaciones..."):
+    with st.spinner("Computing correlations..."):
         prices = fetch_historical(tickers)
         returns = compute_returns(prices)
         corr = returns.corr()
@@ -163,15 +163,15 @@ if results:
     export_data = pd.DataFrame([
         {
             "Ticker": a["ticker"],
-            "Empresa": a["company_name"],
-            "Peso": a["weight"],
-            "Monto_USD": a["amount"],
+            "Company": a["company_name"],
+            "Weight": a["weight"],
+            "Amount_USD": a["amount"],
         }
         for a in main_result["allocations"] if a["weight"] > 0.001
     ])
     csv = export_data.to_csv(index=False)
     st.download_button(
-        "Descargar Asignacion (CSV)",
+        "Download Allocation (CSV)",
         data=csv,
         file_name="portfolio_allocation.csv",
         mime="text/csv",

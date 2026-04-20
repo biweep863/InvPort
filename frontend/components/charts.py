@@ -20,7 +20,7 @@ def allocation_pie_chart(allocations: list[dict]) -> go.Figure:
         marker=dict(colors=px.colors.qualitative.Set2),
     )])
     fig.update_layout(
-        title="Distribucion del Portafolio",
+        title="Portfolio Distribution",
         showlegend=True,
         height=450,
     )
@@ -40,7 +40,7 @@ def efficient_frontier_chart(
     fig.add_trace(go.Scatter(
         x=vols, y=rets,
         mode="lines",
-        name="Frontera Eficiente",
+        name="Efficient Frontier",
         line=dict(color="royalblue", width=2),
     ))
 
@@ -48,7 +48,7 @@ def efficient_frontier_chart(
         x=[optimal_point["volatility"] * 100],
         y=[optimal_point["expected_return"] * 100],
         mode="markers",
-        name=f"Optimo ({optimal_point.get('method', 'markowitz')})",
+        name=f"Optimal ({optimal_point.get('method', 'markowitz')})",
         marker=dict(color="gold", size=16, symbol="star", line=dict(width=2, color="black")),
     ))
 
@@ -57,14 +57,14 @@ def efficient_frontier_chart(
             x=[comparison_point["volatility"] * 100],
             y=[comparison_point["expected_return"] * 100],
             mode="markers",
-            name=f"Optimo ({comparison_point.get('method', 'genetic')})",
+            name=f"Optimal ({comparison_point.get('method', 'genetic')})",
             marker=dict(color="red", size=14, symbol="diamond", line=dict(width=2, color="black")),
         ))
 
     fig.update_layout(
-        title="Frontera Eficiente de Markowitz",
-        xaxis_title="Volatilidad Anual (%)",
-        yaxis_title="Retorno Esperado Anual (%)",
+        title="Markowitz Efficient Frontier",
+        xaxis_title="Annual Volatility (%)",
+        yaxis_title="Expected Annual Return (%)",
         height=500,
         template="plotly_white",
     )
@@ -84,7 +84,7 @@ def correlation_heatmap(correlation_matrix: pd.DataFrame) -> go.Figure:
         textfont={"size": 10},
     ))
     fig.update_layout(
-        title="Matriz de Correlacion",
+        title="Correlation Matrix",
         height=500,
         template="plotly_white",
     )
@@ -103,7 +103,7 @@ def monte_carlo_fan_chart(percentiles: dict, days: int, investment: float) -> go
         fill="toself",
         fillcolor="rgba(68, 114, 196, 0.15)",
         line=dict(color="rgba(255,255,255,0)"),
-        name="Rango 5%-95%",
+        name="Range 5%-95%",
     ))
 
     fig.add_trace(go.Scatter(
@@ -112,14 +112,14 @@ def monte_carlo_fan_chart(percentiles: dict, days: int, investment: float) -> go
         fill="toself",
         fillcolor="rgba(68, 114, 196, 0.3)",
         line=dict(color="rgba(255,255,255,0)"),
-        name="Rango 25%-75%",
+        name="Range 25%-75%",
     ))
 
     fig.add_trace(go.Scatter(
         x=x,
         y=percentiles["p50"],
         mode="lines",
-        name="Mediana (50%)",
+        name="Median (50%)",
         line=dict(color="royalblue", width=2),
     ))
 
@@ -127,13 +127,13 @@ def monte_carlo_fan_chart(percentiles: dict, days: int, investment: float) -> go
         y=investment,
         line_dash="dash",
         line_color="red",
-        annotation_text=f"Inversion Inicial: ${investment:,.0f}",
+        annotation_text=f"Initial Investment: ${investment:,.0f}",
     )
 
     fig.update_layout(
-        title="Simulacion Monte Carlo - Evolucion del Portafolio",
-        xaxis_title="Dias",
-        yaxis_title="Valor del Portafolio (USD)",
+        title="Monte Carlo Simulation - Portfolio Evolution",
+        xaxis_title="Days",
+        yaxis_title="Portfolio Value (USD)",
         height=500,
         template="plotly_white",
     )
@@ -152,9 +152,9 @@ def risk_contribution_chart(tickers: list[str], contributions: list[float]) -> g
         marker_color=["#e74c3c" if d[1] > 0.15 else "#3498db" for d in data],
     )])
     fig.update_layout(
-        title="Contribucion al Riesgo por Accion",
-        xaxis_title="Accion",
-        yaxis_title="Contribucion al Riesgo (%)",
+        title="Risk Contribution by Stock",
+        xaxis_title="Stock",
+        yaxis_title="Risk Contribution (%)",
         height=400,
         template="plotly_white",
     )
@@ -168,7 +168,7 @@ def backtest_chart(dates: list[str], portfolio_values: list[float], benchmark_va
     fig.add_trace(go.Scatter(
         x=dates, y=portfolio_values,
         mode="lines",
-        name="Portafolio",
+        name="Portfolio",
         line=dict(color="royalblue", width=2),
     ))
 
@@ -180,9 +180,9 @@ def backtest_chart(dates: list[str], portfolio_values: list[float], benchmark_va
     ))
 
     fig.update_layout(
-        title="Rendimiento Historico: Portafolio vs SPY",
-        xaxis_title="Fecha",
-        yaxis_title="Valor (USD)",
+        title="Historical Performance: Portfolio vs SPY",
+        xaxis_title="Date",
+        yaxis_title="Value (USD)",
         height=500,
         template="plotly_white",
         hovermode="x unified",
@@ -204,8 +204,8 @@ def drawdown_chart(dates: list[str], drawdown_series: list[float]) -> go.Figure:
     ))
 
     fig.update_layout(
-        title="Drawdown Historico",
-        xaxis_title="Fecha",
+        title="Historical Drawdown",
+        xaxis_title="Date",
         yaxis_title="Drawdown (%)",
         height=350,
         template="plotly_white",

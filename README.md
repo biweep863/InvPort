@@ -1,39 +1,39 @@
-# InvPort - Optimizador de Portafolios S&P 500
+# InvPort - S&P 500 Portfolio Optimizer
 
-Herramienta de optimizacion de portafolios de inversion que utiliza algoritmos de Markowitz y geneticos para encontrar la distribucion optima de activos del S&P 500, con simulaciones Monte Carlo, backtesting historico y analisis de riesgo avanzado.
+Investment portfolio optimization tool that uses Markowitz and genetic algorithms to find the optimal asset allocation from S&P 500 stocks, with Monte Carlo simulations, historical backtesting, and advanced risk analysis.
 
-## Caracteristicas
+## Features
 
-- **Optimizacion Markowitz** -- Media-varianza con restricciones de volatilidad objetivo
-- **Algoritmo Genetico** -- Optimizacion heuristica con seleccion por torneo y crossover uniforme
-- **Simulacion Monte Carlo** -- Proyeccion de valor del portafolio con bandas de percentiles y metricas de riesgo extendidas (CVaR, drawdown)
-- **Backtest Historico** -- Comparacion del portafolio optimizado vs SPY usando datos reales de los ultimos 2 anos
-- **Frontera Eficiente** -- Visualizacion de la relacion riesgo-retorno optima
-- **Analisis Individual de Acciones** -- Retorno, volatilidad, Sharpe, beta, drawdown y rango 52 semanas por accion
-- **Metricas Avanzadas** -- Sortino, Calmar, Treynor, Information Ratio, Alpha de Jensen, Beta, CVaR, contribucion al riesgo
-- **100+ acciones del S&P 500** organizadas por sector (Tech, Finanzas, Salud, Energia, etc.)
-- **3 perfiles de riesgo**: Conservador (10% vol), Balanceado (18% vol), Agresivo (30% vol)
-- **Datos en tiempo real** de Yahoo Finance con cache TTL de 1 hora
+- **Markowitz Optimization** -- Mean-variance with target volatility constraints
+- **Genetic Algorithm** -- Heuristic optimization with tournament selection and uniform crossover
+- **Monte Carlo Simulation** -- Portfolio value projection with percentile bands and extended risk metrics (CVaR, drawdown)
+- **Historical Backtest** -- Comparison of the optimized portfolio vs SPY using real data from the last 2 years
+- **Efficient Frontier** -- Visualization of the optimal risk-return relationship
+- **Individual Stock Analysis** -- Return, volatility, Sharpe, beta, drawdown, and 52-week range per stock
+- **Advanced Metrics** -- Sortino, Calmar, Treynor, Information Ratio, Jensen's Alpha, Beta, CVaR, risk contribution
+- **100+ S&P 500 stocks** organized by sector (Tech, Finance, Healthcare, Energy, etc.)
+- **3 risk profiles**: Conservative (10% vol), Balanced (18% vol), Aggressive (30% vol)
+- **Real-time data** from Yahoo Finance with 1-hour TTL cache
 
 ## Tech Stack
 
-| Componente | Tecnologia |
-|------------|------------|
+| Component | Technology |
+|-----------|------------|
 | Backend API | FastAPI + Uvicorn |
 | Frontend | Streamlit |
-| Datos financieros | yfinance (Yahoo Finance) |
-| Optimizacion | SciPy (SLSQP) + NumPy |
-| Visualizacion | Plotly |
-| Validacion | Pydantic |
+| Financial Data | yfinance (Yahoo Finance) |
+| Optimization | SciPy (SLSQP) + NumPy |
+| Visualization | Plotly |
+| Validation | Pydantic |
 
-## Requisitos
+## Requirements
 
 - Python 3.11+
 
-## Instalacion
+## Installation
 
 ```bash
-git clone <url-del-repo>
+git clone <repo-url>
 cd InvPort
 
 python -m venv .venv
@@ -43,111 +43,111 @@ source .venv/bin/activate  # Linux/macOS
 pip install -r requirements.txt
 ```
 
-## Uso
+## Usage
 
-Se necesitan **dos terminales**:
+You need **two terminals**:
 
 ```bash
-# Terminal 1: Backend API (puerto 8000)
+# Terminal 1: Backend API (port 8000)
 uvicorn InvPort.backend.main:app --reload --port 8000
 
-# Terminal 2: Frontend Streamlit (puerto 8501)
+# Terminal 2: Frontend Streamlit (port 8501)
 streamlit run frontend/app.py
 ```
 
-Abre http://localhost:8501 en tu navegador.
+Open http://localhost:8501 in your browser.
 
-## Estructura del Proyecto
+## Project Structure
 
 ```
 InvPort/
 ├── backend/
-│   ├── main.py              # Entry point FastAPI
-│   ├── config.py            # Constantes, perfiles de riesgo, tickers
+│   ├── main.py              # FastAPI entry point
+│   ├── config.py            # Constants, risk profiles, tickers
 │   ├── models/
-│   │   ├── portfolio.py     # Markowitz, genetico, Monte Carlo, frontera eficiente
+│   │   ├── portfolio.py     # Markowitz, genetic, Monte Carlo, efficient frontier
 │   │   ├── metrics.py       # Sortino, drawdown, CVaR, beta, alpha, etc.
-│   │   ├── backtest.py      # Backtesting historico vs benchmark
-│   │   └── schemas.py       # Modelos Pydantic (request/response)
+│   │   ├── backtest.py      # Historical backtesting vs benchmark
+│   │   └── schemas.py       # Pydantic models (request/response)
 │   ├── routers/
-│   │   ├── stocks.py        # Endpoints de acciones y analisis individual
-│   │   └── optimize.py      # Endpoints de optimizacion, simulacion, backtest
+│   │   ├── stocks.py        # Stock endpoints and individual analysis
+│   │   └── optimize.py      # Optimization, simulation, backtest endpoints
 │   └── services/
-│       ├── market_data.py   # Yahoo Finance wrapper con cache
-│       └── optimizer.py     # Orquestador de servicios
+│       ├── market_data.py   # Yahoo Finance wrapper with cache
+│       └── optimizer.py     # Service orchestrator
 ├── frontend/
-│   ├── app.py               # Pagina principal Streamlit
+│   ├── app.py               # Streamlit main page
 │   ├── components/
-│   │   ├── charts.py        # Graficos Plotly (pie, frontera, heatmap, fan, backtest, drawdown, riesgo)
-│   │   ├── stock_picker.py  # Selector de acciones por sector
-│   │   └── risk_slider.py   # Selector de perfil de riesgo
+│   │   ├── charts.py        # Plotly charts (pie, frontier, heatmap, fan, backtest, drawdown, risk)
+│   │   ├── stock_picker.py  # Stock selector by sector
+│   │   └── risk_slider.py   # Risk profile selector
 │   └── pages/
-│       ├── 1_Seleccion.py   # Seleccion + analisis individual de acciones
-│       ├── 2_Resultados.py  # Dashboard con metricas basicas y avanzadas
-│       ├── 3_Simulacion.py  # Simulacion Monte Carlo con riesgo extendido
-│       └── 4_Backtest.py    # Backtest historico vs SPY
+│       ├── 1_Selection.py   # Stock selection + individual analysis
+│       ├── 2_Results.py     # Dashboard with basic and advanced metrics
+│       ├── 3_Simulation.py  # Monte Carlo simulation with extended risk
+│       └── 4_Backtest.py    # Historical backtest vs SPY
 ├── tests/
-│   ├── conftest.py          # Fixtures compartidos
-│   ├── test_portfolio.py    # Tests de algoritmos de optimizacion
-│   ├── test_metrics.py      # Tests de metricas financieras
-│   ├── test_schemas.py      # Tests de validacion Pydantic
-│   ├── test_market_data.py  # Tests del servicio de datos
-│   └── test_api.py          # Tests de endpoints
+│   ├── conftest.py          # Shared fixtures
+│   ├── test_portfolio.py    # Optimization algorithm tests
+│   ├── test_metrics.py      # Financial metrics tests
+│   ├── test_schemas.py      # Pydantic validation tests
+│   ├── test_market_data.py  # Data service tests
+│   └── test_api.py          # Endpoint tests
 ├── requirements.txt
 └── README.md
 ```
 
 ## API Endpoints
 
-| Metodo | Ruta | Descripcion |
-|--------|------|-------------|
+| Method | Route | Description |
+|--------|-------|-------------|
 | `GET` | `/` | Health check |
-| `GET` | `/api/stocks/` | Listar acciones (filtro opcional `?q=`) |
-| `GET` | `/api/stocks/{ticker}/history` | Historial de precios |
-| `POST` | `/api/stocks/analyze` | Analisis individual de acciones (retorno, vol, beta, drawdown) |
-| `POST` | `/api/optimize` | Optimizar portafolio con metricas extendidas |
-| `POST` | `/api/simulate` | Simulacion Monte Carlo con CVaR y drawdown |
-| `POST` | `/api/backtest` | Backtest historico vs SPY |
+| `GET` | `/api/stocks/` | List stocks (optional filter `?q=`) |
+| `GET` | `/api/stocks/{ticker}/history` | Price history |
+| `POST` | `/api/stocks/analyze` | Individual stock analysis (return, vol, beta, drawdown) |
+| `POST` | `/api/optimize` | Optimize portfolio with extended metrics |
+| `POST` | `/api/simulate` | Monte Carlo simulation with CVaR and drawdown |
+| `POST` | `/api/backtest` | Historical backtest vs SPY |
 
-## Metricas Disponibles
+## Available Metrics
 
-**Portafolio:**
-- Retorno esperado anual, Volatilidad anual, Ratio de Sharpe
-- Ratio de Sortino (penaliza solo volatilidad negativa)
-- Max Drawdown (mayor caida desde un maximo)
-- Ratio Calmar (retorno / max drawdown)
-- CVaR 95% / Expected Shortfall (perdida esperada en el peor 5%)
-- Beta (sensibilidad al mercado vs SPY)
-- Alpha de Jensen (retorno por encima de lo que CAPM predice)
-- Ratio Treynor (retorno por unidad de riesgo sistematico)
-- Information Ratio (retorno activo / tracking error)
-- Contribucion al riesgo por accion
+**Portfolio:**
+- Expected annual return, Annual volatility, Sharpe Ratio
+- Sortino Ratio (penalizes only downside volatility)
+- Max Drawdown (largest drop from a peak)
+- Calmar Ratio (return / max drawdown)
+- CVaR 95% / Expected Shortfall (expected loss in the worst 5%)
+- Beta (market sensitivity vs SPY)
+- Jensen's Alpha (return above what CAPM predicts)
+- Treynor Ratio (return per unit of systematic risk)
+- Information Ratio (active return / tracking error)
+- Risk contribution per stock
 
-**Simulacion:**
-- VaR 95%, CVaR 95%, probabilidad de perdida
-- Drawdown mediano y extremo (percentil 95) across simulaciones
-- Rango de resultados finales (percentil 1-99)
+**Simulation:**
+- VaR 95%, CVaR 95%, probability of loss
+- Median and extreme drawdown (95th percentile) across simulations
+- Final outcome range (1st-99th percentile)
 
 ## Tests
 
 ```bash
 pip install pytest httpx
 
-# Correr todos los tests
+# Run all tests
 pytest
 
-# Con verbose
+# Verbose
 pytest -v
 
-# Con cobertura
+# With coverage
 pip install pytest-cov
 pytest --cov=backend
 ```
 
-## Flujo de la Aplicacion
+## Application Flow
 
-1. **Seleccion** -- Elige 2-15 acciones, analiza sus estadisticas individuales, selecciona perfil de riesgo
-2. **Optimizacion** -- El backend descarga datos de Yahoo Finance, calcula retornos/covarianza, ejecuta el algoritmo y computa todas las metricas
-3. **Resultados** -- Metricas basicas y avanzadas, asignacion, contribucion al riesgo, frontera eficiente, correlacion
-4. **Simulacion** -- Monte Carlo con metricas de riesgo extendidas (CVaR, drawdown, rango de escenarios)
-5. **Backtest** -- Rendimiento historico del portafolio vs SPY con grafico de drawdown
+1. **Selection** -- Choose 2-15 stocks, analyze their individual statistics, select risk profile
+2. **Optimization** -- The backend downloads data from Yahoo Finance, computes returns/covariance, runs the algorithm, and calculates all metrics
+3. **Results** -- Basic and advanced metrics, allocation, risk contribution, efficient frontier, correlation
+4. **Simulation** -- Monte Carlo with extended risk metrics (CVaR, drawdown, scenario range)
+5. **Backtest** -- Historical portfolio performance vs SPY with drawdown chart

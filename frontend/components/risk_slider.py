@@ -3,26 +3,26 @@
 import streamlit as st
 
 RISK_OPTIONS = {
-    "Bajo (Conservador)": "bajo",
-    "Medio (Balanceado)": "medio",
-    "Alto (Agresivo)": "alto",
+    "Low (Conservative)": "bajo",
+    "Medium (Balanced)": "medio",
+    "High (Aggressive)": "alto",
 }
 
 RISK_DESCRIPTIONS = {
-    "bajo": "Prioriza la preservacion del capital. Menor retorno esperado pero menor riesgo de perdidas.",
-    "medio": "Balance entre crecimiento y seguridad. Acepta volatilidad moderada por mejores retornos.",
-    "alto": "Busca maximo crecimiento. Acepta alta volatilidad y riesgo de perdidas temporales significativas.",
+    "bajo": "Prioritizes capital preservation. Lower expected return but lower risk of losses.",
+    "medio": "Balance between growth and safety. Accepts moderate volatility for better returns.",
+    "alto": "Seeks maximum growth. Accepts high volatility and risk of significant temporary losses.",
 }
 
 
 def render_risk_slider() -> str:
     """Render risk appetite selector. Returns 'bajo', 'medio', or 'alto'."""
-    st.subheader("Perfil de Riesgo")
+    st.subheader("Risk Profile")
 
     selected_label = st.select_slider(
-        "Cual es tu apetito de riesgo?",
+        "What is your risk appetite?",
         options=list(RISK_OPTIONS.keys()),
-        value="Medio (Balanceado)",
+        value="Medium (Balanced)",
     )
 
     risk_key = RISK_OPTIONS[selected_label]

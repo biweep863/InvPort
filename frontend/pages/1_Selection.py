@@ -13,8 +13,8 @@ from InvPort.backend.config import SP500_TICKERS, RISK_PROFILES
 from InvPort.frontend.components.stock_picker import render_stock_picker
 from InvPort.frontend.components.risk_slider import render_risk_slider
 
-st.set_page_config(page_title="Seleccion - Optimizador", layout="wide")
-st.title("Seleccion de Portafolio")
+st.set_page_config(page_title="Selection - Optimizer", layout="wide")
+st.title("Portfolio Selection")
 
 # --- Stock Picker ---
 selected_tickers = render_stock_picker(SP500_TICKERS)
@@ -23,8 +23,8 @@ selected_tickers = render_stock_picker(SP500_TICKERS)
 API_URL = "http://localhost:8000"
 
 if len(selected_tickers) >= 2:
-    if st.button("Analizar Acciones Seleccionadas"):
-        with st.spinner("Analizando acciones..."):
+    if st.button("Analyze Selected Stocks"):
+        with st.spinner("Analyzing stocks..."):
             try:
                 resp = requests.post(
                     f"{API_URL}/api/stocks/analyze",
@@ -38,9 +38,9 @@ if len(selected_tickers) >= 2:
                 df = pd.DataFrame([
                     {
                         "Ticker": a["ticker"],
-                        "Precio": f"${a['current_price']:,.2f}",
-                        "Retorno Anual": f"{a['annualized_return'] * 100:.1f}%",
-                        "Volatilidad": f"{a['annualized_volatility'] * 100:.1f}%",
+                        "Price": f"${a['current_price']:,.2f}",
+                        "Annual Return": f"{a['annualized_return'] * 100:.1f}%",
+                        "Volatility": f"{a['annualized_volatility'] * 100:.1f}%",
                         "Sharpe": f"{a['sharpe_ratio']:.2f}",
                         "Max Drawdown": f"{a['max_drawdown'] * 100:.1f}%",
                         "Beta": f"{a['beta']:.2f}",
@@ -51,7 +51,7 @@ if len(selected_tickers) >= 2:
                 ])
                 st.dataframe(df, use_container_width=True, hide_index=True)
             except requests.exceptions.ConnectionError:
-                st.error("No se pudo conectar al API. Asegurate de que el backend este corriendo.")
+                st.error("Could not connect to the API. Make sure the backend is running.")
             except Exception as e:
                 st.error(f"Error: {e}")
 
@@ -63,9 +63,9 @@ risk_profile = render_risk_slider()
 st.markdown("---")
 
 # --- Investment Amount ---
-st.subheader("Monto de Inversion")
+st.subheader("Investment Amount")
 investment = st.number_input(
-    "Cuanto deseas invertir (USD)?",
+    "How much do you want to invest (USD)?",
     min_value=100.0,
     max_value=10_000_000.0,
     value=10_000.0,
@@ -74,14 +74,14 @@ investment = st.number_input(
 )
 
 # --- Method ---
-st.subheader("Metodo de Optimizacion")
+st.subheader("Optimization Method")
 method = st.radio(
-    "Selecciona el metodo:",
+    "Select the method:",
     options=["markowitz", "genetic", "both"],
     format_func=lambda x: {
         "markowitz": "Markowitz (Mean-Variance)",
-        "genetic": "Algoritmo Genetico",
-        "both": "Comparar Ambos",
+        "genetic": "Genetic Algorithm",
+        "both": "Compare Both",
     }[x],
     horizontal=True,
 )
@@ -89,11 +89,11 @@ method = st.radio(
 st.markdown("---")
 
 # --- Optimize Button ---
-if st.button("Optimizar Portafolio", type="primary", use_container_width=True):
+if st.button("Optimize Portfolio", type="primary", use_container_width=True):
     if len(selected_tickers) < 2:
-        st.error("Selecciona al menos 2 acciones para continuar.")
+        st.error("Select at least 2 stocks to continue.")
     else:
-        with st.spinner("Descargando datos y optimizando... Esto puede tomar unos segundos."):
+        with st.spinner("Downloading data and optimizing... This may take a few seconds."):
             try:
                 response = requests.post(
                     f"{API_URL}/api/optimize",
@@ -115,16 +115,16 @@ if st.button("Optimizar Portafolio", type="primary", use_container_width=True):
                 st.session_state["risk_profile"] = risk_profile
                 st.session_state["method"] = method
 
-                st.success("Optimizacion completada. Ve a la pagina Resultados para ver el analisis.")
+                st.success("Optimization complete. Go to the Results page to view the analysis.")
                 st.balloons()
 
             except requests.exceptions.ConnectionError:
                 st.error(
-                    "No se pudo conectar al servidor API. "
-                    "Asegurate de que el backend este corriendo:\n\n"
+                    "Could not connect to the API server. "
+                    "Make sure the backend is running:\n\n"
                     "`uvicorn backend.main:app --reload --port 8000`"
                 )
             except requests.exceptions.HTTPError as e:
-                st.error(f"Error del servidor: {e}")
+                st.error(f"Server error: {e}")
             except Exception as e:
-                st.error(f"Error inesperado: {e}")
+                st.error(f"Unexpected error: {e}")

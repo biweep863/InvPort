@@ -7,8 +7,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from InvPort.backend.routers import stocks
 
 app = FastAPI(
-    title="Optimizador de Portafolios S&P 500",
-    description="API para optimización inteligente de portafolios de inversión",
+    title="S&P 500 Portfolio Optimizer",
+    description="API for smart investment portfolio optimization",
     version="1.0.0",
 )
 

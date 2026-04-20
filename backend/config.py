@@ -6,9 +6,9 @@ TRADING_DAYS_PER_YEAR = 252
 BENCHMARK_TICKER = "SPY"
 
 RISK_PROFILES = {
-    "bajo": {"target_volatility": 0.10, "label": "Conservador"},
-    "medio": {"target_volatility": 0.18, "label": "Balanceado"},
-    "alto": {"target_volatility": 0.30, "label": "Agresivo"},
+    "bajo": {"target_volatility": 0.10, "label": "Conservative"},
+    "medio": {"target_volatility": 0.18, "label": "Balanced"},
+    "alto": {"target_volatility": 0.30, "label": "Aggressive"},
 }
 
 # Curated list of S&P 500 stocks (ticker -> display name)
