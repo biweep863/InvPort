@@ -17,14 +17,14 @@ Investment portfolio optimization tool that uses Markowitz and genetic algorithm
 
 ## Tech Stack
 
-| Component | Technology |
-|-----------|------------|
-| Backend API | FastAPI + Uvicorn |
-| Frontend | Streamlit |
+| Component      | Technology               |
+| -------------- | ------------------------ |
+| Backend API    | FastAPI + Uvicorn        |
+| Frontend       | Streamlit                |
 | Financial Data | yfinance (Yahoo Finance) |
-| Optimization | SciPy (SLSQP) + NumPy |
-| Visualization | Plotly |
-| Validation | Pydantic |
+| Optimization   | SciPy (SLSQP) + NumPy    |
+| Visualization  | Plotly                   |
+| Validation     | Pydantic                 |
 
 ## Requirements
 
@@ -99,19 +99,20 @@ InvPort/
 
 ## API Endpoints
 
-| Method | Route | Description |
-|--------|-------|-------------|
-| `GET` | `/` | Health check |
-| `GET` | `/api/stocks/` | List stocks (optional filter `?q=`) |
-| `GET` | `/api/stocks/{ticker}/history` | Price history |
-| `POST` | `/api/stocks/analyze` | Individual stock analysis (return, vol, beta, drawdown) |
-| `POST` | `/api/optimize` | Optimize portfolio with extended metrics |
-| `POST` | `/api/simulate` | Monte Carlo simulation with CVaR and drawdown |
-| `POST` | `/api/backtest` | Historical backtest vs SPY |
+| Method | Route                          | Description                                             |
+| ------ | ------------------------------ | ------------------------------------------------------- |
+| `GET`  | `/`                            | Health check                                            |
+| `GET`  | `/api/stocks/`                 | List stocks (optional filter `?q=`)                     |
+| `GET`  | `/api/stocks/{ticker}/history` | Price history                                           |
+| `POST` | `/api/stocks/analyze`          | Individual stock analysis (return, vol, beta, drawdown) |
+| `POST` | `/api/optimize`                | Optimize portfolio with extended metrics                |
+| `POST` | `/api/simulate`                | Monte Carlo simulation with CVaR and drawdown           |
+| `POST` | `/api/backtest`                | Historical backtest vs SPY                              |
 
 ## Available Metrics
 
 **Portfolio:**
+
 - Expected annual return, Annual volatility, Sharpe Ratio
 - Sortino Ratio (penalizes only downside volatility)
 - Max Drawdown (largest drop from a peak)
@@ -124,6 +125,7 @@ InvPort/
 - Risk contribution per stock
 
 **Simulation:**
+
 - VaR 95%, CVaR 95%, probability of loss
 - Median and extreme drawdown (95th percentile) across simulations
 - Final outcome range (1st-99th percentile)
