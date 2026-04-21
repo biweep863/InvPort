@@ -3,12 +3,13 @@
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 import streamlit as st
-import requests
 
-from InvPort.frontend.components.charts import backtest_chart, drawdown_chart
+from frontend.components.charts import backtest_chart, drawdown_chart
+from backend.services.optimizer import run_backtest_service
+from backend.models.schemas import BacktestRequest
 
 st.set_page_config(page_title="Backtest - Optimizer", layout="wide")
 st.title("Historical Backtest")
@@ -28,25 +29,18 @@ over the last 2 years, compared against the S&P 500 index (SPY).
 **Note:** Past results do not guarantee future returns.
 """)
 
-API_URL = "http://localhost:8000"
-
 if st.button("Run Backtest", type="primary", use_container_width=True):
     weights = [a["weight"] for a in result["allocations"]]
     tickers_ordered = [a["ticker"] for a in result["allocations"]]
 
     with st.spinner("Running historical backtest..."):
         try:
-            response = requests.post(
-                f"{API_URL}/api/backtest",
-                json={
-                    "tickers": tickers_ordered,
-                    "weights": weights,
-                    "investment_amount": investment,
-                },
-                timeout=120,
+            req = BacktestRequest(
+                tickers=tickers_ordered,
+                weights=weights,
+                investment_amount=investment,
             )
-            response.raise_for_status()
-            bt = response.json()
+            bt = run_backtest_service(req).model_dump()
 
             st.markdown("---")
 
@@ -93,11 +87,5 @@ if st.button("Run Backtest", type="primary", use_container_width=True):
             else:
                 st.info(f"SPY outperformed your portfolio by {abs(outperformance) * 100:.2f} percentage points.")
 
-        except requests.exceptions.ConnectionError:
-            st.error(
-                "Could not connect to the API server. "
-                "Make sure the backend is running:\n\n"
-                "`uvicorn backend.main:app --reload --port 8000`"
-            )
         except Exception as e:
             st.error(f"Error: {e}")

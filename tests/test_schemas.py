@@ -3,7 +3,7 @@
 import pytest
 from pydantic import ValidationError
 
-from InvPort.backend.models.schemas import (
+from backend.models.schemas import (
     OptimizeRequest,
     SimulateRequest,
     AllocationItem,

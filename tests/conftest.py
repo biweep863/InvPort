@@ -5,7 +5,7 @@ import pandas as pd
 import pytest
 from fastapi.testclient import TestClient
 
-from InvPort.backend.main import app
+from backend.main import app
 
 
 @pytest.fixture

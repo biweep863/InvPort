@@ -3,14 +3,14 @@
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 import streamlit as st
 import pandas as pd
 import numpy as np
 
-from InvPort.backend.services.market_data import fetch_historical, compute_returns
-from InvPort.frontend.components.charts import (
+from backend.services.market_data import fetch_historical, compute_returns
+from frontend.components.charts import (
     allocation_pie_chart,
     efficient_frontier_chart,
     correlation_heatmap,

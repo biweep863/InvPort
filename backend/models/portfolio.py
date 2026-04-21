@@ -3,7 +3,7 @@
 import numpy as np
 from scipy.optimize import minimize
 
-from InvPort.backend.config import RISK_FREE_RATE, TRADING_DAYS_PER_YEAR
+from backend.config import RISK_FREE_RATE, TRADING_DAYS_PER_YEAR
 
 
 # ---------------------------------------------------------------------------

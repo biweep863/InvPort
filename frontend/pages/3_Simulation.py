@@ -3,12 +3,13 @@
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 import streamlit as st
-import requests
 
-from InvPort.frontend.components.charts import monte_carlo_fan_chart
+from frontend.components.charts import monte_carlo_fan_chart
+from backend.services.optimizer import run_simulation
+from backend.models.schemas import SimulateRequest
 
 st.set_page_config(page_title="Simulation - Optimizer", layout="wide")
 st.title("Monte Carlo Simulation")
@@ -35,27 +36,20 @@ with col2:
 
 days = years * 252
 
-API_URL = "http://localhost:8000"
-
 if st.button("Run Simulation", type="primary", use_container_width=True):
     weights = [a["weight"] for a in result["allocations"]]
     tickers_ordered = [a["ticker"] for a in result["allocations"]]
 
     with st.spinner(f"Running {n_sims} simulations for {years} year(s)..."):
         try:
-            response = requests.post(
-                f"{API_URL}/api/simulate",
-                json={
-                    "tickers": tickers_ordered,
-                    "weights": weights,
-                    "investment_amount": investment,
-                    "days": days,
-                    "n_simulations": n_sims,
-                },
-                timeout=180,
+            req = SimulateRequest(
+                tickers=tickers_ordered,
+                weights=weights,
+                investment_amount=investment,
+                days=days,
+                n_simulations=n_sims,
             )
-            response.raise_for_status()
-            sim_data = response.json()
+            sim_data = run_simulation(req).model_dump()
 
             st.markdown("---")
 
@@ -121,11 +115,5 @@ if st.button("Run Simulation", type="primary", use_container_width=True):
             - The average loss in those worst scenarios would be **${sim_data.get('cvar_95', 0):,.0f}** (CVaR)
             """)
 
-        except requests.exceptions.ConnectionError:
-            st.error(
-                "Could not connect to the API server. "
-                "Make sure the backend is running:\n\n"
-                "`uvicorn backend.main:app --reload --port 8000`"
-            )
         except Exception as e:
             st.error(f"Error: {e}")

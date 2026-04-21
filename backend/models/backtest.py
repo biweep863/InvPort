@@ -3,7 +3,7 @@
 import numpy as np
 import pandas as pd
 
-from InvPort.backend.models.metrics import drawdown_series
+from backend.models.metrics import drawdown_series
 
 
 def run_backtest(

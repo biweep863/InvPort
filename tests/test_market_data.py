@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from InvPort.backend.services.market_data import compute_returns, compute_stats
+from backend.services.market_data import compute_returns, compute_stats
 
 
 class TestComputeReturns:

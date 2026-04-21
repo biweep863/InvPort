@@ -2,16 +2,16 @@
 
 import numpy as np
 
-from InvPort.backend.config import RISK_PROFILES, SP500_TICKERS
-from InvPort.backend.models.backtest import run_backtest
-from InvPort.backend.models.metrics import compute_all_metrics
-from InvPort.backend.models.portfolio import (
+from backend.config import RISK_PROFILES, SP500_TICKERS
+from backend.models.backtest import run_backtest
+from backend.models.metrics import compute_all_metrics
+from backend.models.portfolio import (
     compute_efficient_frontier,
     markowitz_optimize,
     genetic_optimize,
     monte_carlo_simulation,
 )
-from InvPort.backend.models.schemas import (
+from backend.models.schemas import (
     AllocationItem,
     BacktestRequest,
     BacktestResponse,
@@ -22,14 +22,14 @@ from InvPort.backend.models.schemas import (
     SimulateResponse,
     StockAnalysis,
 )
-from InvPort.backend.services.market_data import (
+from backend.services.market_data import (
     compute_returns,
     compute_simple_returns,
     compute_stats,
     fetch_benchmark,
     fetch_historical,
 )
-from InvPort.backend.config import RISK_FREE_RATE, TRADING_DAYS_PER_YEAR
+from backend.config import RISK_FREE_RATE, TRADING_DAYS_PER_YEAR
 
 
 def run_optimization(req: OptimizeRequest) -> OptimizeResponse | list[OptimizeResponse]:
@@ -182,7 +182,7 @@ def run_backtest_service(req: BacktestRequest) -> BacktestResponse:
 
 def analyze_stocks(tickers: list[str]) -> list[StockAnalysis]:
     """Compute individual stock analysis for a list of tickers."""
-    from InvPort.backend.models.metrics import max_drawdown, portfolio_beta
+    from backend.models.metrics import max_drawdown, portfolio_beta
 
     prices = fetch_historical(tickers)
     benchmark_prices = fetch_benchmark()

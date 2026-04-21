@@ -2,10 +2,10 @@
 
 from fastapi import APIRouter, Query
 
-from InvPort.backend.config import SP500_TICKERS
-from InvPort.backend.models.schemas import StockAnalysis, StockInfo
-from InvPort.backend.services.market_data import fetch_historical
-from InvPort.backend.services.optimizer import analyze_stocks
+from backend.config import SP500_TICKERS
+from backend.models.schemas import StockAnalysis, StockInfo
+from backend.services.market_data import fetch_historical
+from backend.services.optimizer import analyze_stocks
 
 router = APIRouter(prefix="/api/stocks", tags=["stocks"])
 

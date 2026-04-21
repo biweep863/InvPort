@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from InvPort.backend.config import RISK_FREE_RATE, TRADING_DAYS_PER_YEAR
+from backend.config import RISK_FREE_RATE, TRADING_DAYS_PER_YEAR
 
 
 def sortino_ratio(portfolio_returns: np.ndarray, risk_free_rate: float = RISK_FREE_RATE) -> float:

@@ -4,14 +4,16 @@ import sys
 from pathlib import Path
 
 # Add project root to path for imports
-sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 import streamlit as st
-import requests
+import pandas as pd
 
-from InvPort.backend.config import SP500_TICKERS, RISK_PROFILES
-from InvPort.frontend.components.stock_picker import render_stock_picker
-from InvPort.frontend.components.risk_slider import render_risk_slider
+from backend.config import SP500_TICKERS, RISK_PROFILES
+from backend.services.optimizer import analyze_stocks, run_optimization
+from backend.models.schemas import OptimizeRequest
+from frontend.components.stock_picker import render_stock_picker
+from frontend.components.risk_slider import render_risk_slider
 
 st.set_page_config(page_title="Selection - Optimizer", layout="wide")
 st.title("Portfolio Selection")
@@ -20,38 +22,27 @@ st.title("Portfolio Selection")
 selected_tickers = render_stock_picker(SP500_TICKERS)
 
 # --- Stock Analysis ---
-API_URL = "http://localhost:8000"
-
 if len(selected_tickers) >= 2:
     if st.button("Analyze Selected Stocks"):
         with st.spinner("Analyzing stocks..."):
             try:
-                resp = requests.post(
-                    f"{API_URL}/api/stocks/analyze",
-                    json=selected_tickers,
-                    timeout=60,
-                )
-                resp.raise_for_status()
-                analysis = resp.json()
+                analysis = analyze_stocks(selected_tickers)
 
-                import pandas as pd
                 df = pd.DataFrame([
                     {
-                        "Ticker": a["ticker"],
-                        "Price": f"${a['current_price']:,.2f}",
-                        "Annual Return": f"{a['annualized_return'] * 100:.1f}%",
-                        "Volatility": f"{a['annualized_volatility'] * 100:.1f}%",
-                        "Sharpe": f"{a['sharpe_ratio']:.2f}",
-                        "Max Drawdown": f"{a['max_drawdown'] * 100:.1f}%",
-                        "Beta": f"{a['beta']:.2f}",
-                        "52W High": f"${a['high_52w']:,.2f}",
-                        "52W Low": f"${a['low_52w']:,.2f}",
+                        "Ticker": a.ticker,
+                        "Price": f"${a.current_price:,.2f}",
+                        "Annual Return": f"{a.annualized_return * 100:.1f}%",
+                        "Volatility": f"{a.annualized_volatility * 100:.1f}%",
+                        "Sharpe": f"{a.sharpe_ratio:.2f}",
+                        "Max Drawdown": f"{a.max_drawdown * 100:.1f}%",
+                        "Beta": f"{a.beta:.2f}",
+                        "52W High": f"${a.high_52w:,.2f}",
+                        "52W Low": f"${a.low_52w:,.2f}",
                     }
                     for a in analysis
                 ])
                 st.dataframe(df, use_container_width=True, hide_index=True)
-            except requests.exceptions.ConnectionError:
-                st.error("Could not connect to the API. Make sure the backend is running.")
             except Exception as e:
                 st.error(f"Error: {e}")
 
@@ -95,18 +86,19 @@ if st.button("Optimize Portfolio", type="primary", use_container_width=True):
     else:
         with st.spinner("Downloading data and optimizing... This may take a few seconds."):
             try:
-                response = requests.post(
-                    f"{API_URL}/api/optimize",
-                    json={
-                        "tickers": selected_tickers,
-                        "risk_profile": risk_profile,
-                        "investment_amount": investment,
-                        "method": method,
-                    },
-                    timeout=120,
+                req = OptimizeRequest(
+                    tickers=selected_tickers,
+                    risk_profile=risk_profile,
+                    investment_amount=investment,
+                    method=method,
                 )
-                response.raise_for_status()
-                data = response.json()
+                result = run_optimization(req)
+
+                # Convert to dict(s) for session state compatibility
+                if isinstance(result, list):
+                    data = [r.model_dump() for r in result]
+                else:
+                    data = result.model_dump()
 
                 # Store results in session state
                 st.session_state["optimization_result"] = data
@@ -118,13 +110,5 @@ if st.button("Optimize Portfolio", type="primary", use_container_width=True):
                 st.success("Optimization complete. Go to the Results page to view the analysis.")
                 st.balloons()
 
-            except requests.exceptions.ConnectionError:
-                st.error(
-                    "Could not connect to the API server. "
-                    "Make sure the backend is running:\n\n"
-                    "`uvicorn backend.main:app --reload --port 8000`"
-                )
-            except requests.exceptions.HTTPError as e:
-                st.error(f"Server error: {e}")
             except Exception as e:
                 st.error(f"Unexpected error: {e}")

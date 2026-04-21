@@ -3,7 +3,7 @@
 import numpy as np
 import pytest
 
-from InvPort.backend.models.portfolio import (
+from backend.models.portfolio import (
     _portfolio_performance,
     markowitz_optimize,
     genetic_optimize,

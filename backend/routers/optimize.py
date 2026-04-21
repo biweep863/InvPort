@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter
 
-from InvPort.backend.models.schemas import (
+from backend.models.schemas import (
     BacktestRequest,
     BacktestResponse,
     OptimizeRequest,
@@ -10,7 +10,7 @@ from InvPort.backend.models.schemas import (
     SimulateRequest,
     SimulateResponse,
 )
-from InvPort.backend.services.optimizer import run_optimization, run_simulation, run_backtest_service
+from backend.services.optimizer import run_optimization, run_simulation, run_backtest_service
 
 router = APIRouter(prefix="/api", tags=["optimize"])
 

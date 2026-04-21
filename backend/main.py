@@ -1,10 +1,10 @@
 """FastAPI application entry point."""
 
-from InvPort.backend.routers import optimize
+from backend.routers import optimize
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from InvPort.backend.routers import stocks
+from backend.routers import stocks
 
 app = FastAPI(
     title="S&P 500 Portfolio Optimizer",

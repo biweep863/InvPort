@@ -3,7 +3,7 @@
 import numpy as np
 import pytest
 
-from InvPort.backend.models.metrics import (
+from backend.models.metrics import (
     sortino_ratio,
     max_drawdown,
     drawdown_series,

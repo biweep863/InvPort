@@ -5,7 +5,7 @@ import pandas as pd
 import yfinance as yf
 from cachetools import TTLCache
 
-from InvPort.backend.config import BENCHMARK_TICKER, DEFAULT_HISTORY_PERIOD, TRADING_DAYS_PER_YEAR
+from backend.config import BENCHMARK_TICKER, DEFAULT_HISTORY_PERIOD, TRADING_DAYS_PER_YEAR
 
 # Cache: max 100 entries, 1-hour TTL
 _price_cache = TTLCache(maxsize=100, ttl=3600)
