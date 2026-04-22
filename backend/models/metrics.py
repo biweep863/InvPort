@@ -54,6 +54,8 @@ def cvar_expected_shortfall(portfolio_returns: np.ndarray, confidence: float = 0
 
 def portfolio_beta(portfolio_returns: np.ndarray, benchmark_returns: np.ndarray) -> float:
     """Beta: sensitivity of portfolio to market movements."""
+    if len(portfolio_returns) < 2 or len(benchmark_returns) < 2:
+        return 0.0
     if len(portfolio_returns) != len(benchmark_returns):
         min_len = min(len(portfolio_returns), len(benchmark_returns))
         portfolio_returns = portfolio_returns[-min_len:]
@@ -92,6 +94,8 @@ def treynor_ratio(
 
 def information_ratio(portfolio_returns: np.ndarray, benchmark_returns: np.ndarray) -> float:
     """Information ratio: active return / tracking error."""
+    if len(portfolio_returns) < 2 or len(benchmark_returns) < 2:
+        return 0.0
     if len(portfolio_returns) != len(benchmark_returns):
         min_len = min(len(portfolio_returns), len(benchmark_returns))
         portfolio_returns = portfolio_returns[-min_len:]
