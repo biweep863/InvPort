@@ -62,6 +62,13 @@ def run_optimization(req: OptimizeRequest) -> OptimizeResponse | list[OptimizeRe
     # Daily simple returns for metrics computation
     simple_returns = compute_simple_returns(prices)
 
+    # Align lengths between portfolio and benchmark returns
+    daily_ret_matrix = simple_returns.values
+    min_len = min(len(daily_ret_matrix), len(bench_returns))
+    if min_len > 0:
+        daily_ret_matrix = daily_ret_matrix[-min_len:]
+        bench_returns = bench_returns[-min_len:]
+
     responses = []
     for method_name, result in results:
         weights = np.array(result["weights"])
@@ -79,7 +86,6 @@ def run_optimization(req: OptimizeRequest) -> OptimizeResponse | list[OptimizeRe
         allocations.sort(key=lambda a: a.weight, reverse=True)
 
         # Compute extended metrics
-        daily_ret_matrix = simple_returns.values
         extended = compute_all_metrics(
             weights, daily_ret_matrix, bench_returns, cov_matrix,
         )

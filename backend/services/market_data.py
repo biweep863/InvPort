@@ -25,7 +25,9 @@ def fetch_historical(tickers: list[str], period: str = DEFAULT_HISTORY_PERIOD) -
         prices = data[["Close"]]
         prices.columns = tickers
 
-    prices = prices.dropna()
+    # Drop tickers that have no data at all, then forward-fill minor gaps
+    prices = prices.dropna(axis=1, how="all")
+    prices = prices.ffill().dropna()
     _price_cache[cache_key] = prices
     return prices
 
