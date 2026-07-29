@@ -19,27 +19,38 @@ def render_stock_picker(available_tickers: dict[str, str]) -> list[str]:
     """Render stock picker with quick-select groups and multiselect."""
     st.subheader("Select Your Stocks")
 
+    def format_option(ticker: str) -> str:
+        return f"{ticker} - {available_tickers[ticker]}"
+
+    options_key = "selected_ticker_options"
+    tickers_key = "selected_tickers"
+
+    if options_key not in st.session_state:
+        initial_tickers = st.session_state.get(tickers_key, [])
+        st.session_state[options_key] = [
+            format_option(t) for t in initial_tickers if t in available_tickers
+        ]
+
     # Quick select groups
     st.write("**Quick select by sector:**")
     cols = st.columns(len(POPULAR_GROUPS))
     for col, (group_name, tickers) in zip(cols, POPULAR_GROUPS.items()):
         with col:
             if st.button(group_name, use_container_width=True):
-                st.session_state["selected_tickers"] = tickers
+                st.session_state[options_key] = [
+                    format_option(t) for t in tickers if t in available_tickers
+                ]
+                st.session_state[tickers_key] = [t for t in tickers if t in available_tickers]
 
     # Manual multiselect
-    options = [f"{t} - {n}" for t, n in available_tickers.items()]
-    default = st.session_state.get("selected_tickers", [])
-    default_options = [f"{t} - {available_tickers[t]}" for t in default if t in available_tickers]
-
     selected = st.multiselect(
         "Select between 2 and 15 S&P 500 stocks:",
-        options=options,
-        default=default_options,
+        options=[format_option(t) for t in available_tickers],
+        key=options_key,
         max_selections=15,
     )
 
     # Extract ticker symbols
     tickers = [s.split(" - ")[0] for s in selected]
-    st.session_state["selected_tickers"] = tickers
+    st.session_state[tickers_key] = tickers
     return tickers

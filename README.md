@@ -17,15 +17,15 @@ Find optimal asset allocations from 100+ S&P 500 stocks with Monte Carlo simulat
 
 ## Features
 
-| Category | Details |
-|----------|---------|
-| **Markowitz Optimization** | Mean-variance with target volatility constraints |
-| **Genetic Algorithm** | Heuristic optimization with tournament selection and uniform crossover |
-| **Monte Carlo Simulation** | Portfolio projection with percentile bands, CVaR, and drawdown |
-| **Historical Backtest** | Optimized portfolio vs SPY using 2 years of real data |
-| **Efficient Frontier** | Visualization of the optimal risk-return tradeoff |
-| **Stock Analysis** | Return, volatility, Sharpe, beta, drawdown, and 52-week range per stock |
-| **Advanced Metrics** | Sortino, Calmar, Treynor, Information Ratio, Jensen's Alpha, CVaR, and more |
+| Category                   | Details                                                                     |
+| -------------------------- | --------------------------------------------------------------------------- |
+| **Markowitz Optimization** | Mean-variance with target volatility constraints                            |
+| **Genetic Algorithm**      | Heuristic optimization with tournament selection and uniform crossover      |
+| **Monte Carlo Simulation** | Portfolio projection with percentile bands, CVaR, and drawdown              |
+| **Historical Backtest**    | Optimized portfolio vs SPY using 2 years of real data                       |
+| **Efficient Frontier**     | Visualization of the optimal risk-return tradeoff                           |
+| **Stock Analysis**         | Return, volatility, Sharpe, beta, drawdown, and 52-week range per stock     |
+| **Advanced Metrics**       | Sortino, Calmar, Treynor, Information Ratio, Jensen's Alpha, CVaR, and more |
 
 > **100+ S&P 500 stocks** organized by sector &bull; **3 risk profiles** (Conservative / Balanced / Aggressive) &bull; **Real-time data** from Yahoo Finance with 1-hour cache
 
@@ -33,14 +33,14 @@ Find optimal asset allocations from 100+ S&P 500 stocks with Monte Carlo simulat
 
 ## Tech Stack
 
-| Component | Technology |
-|-----------|------------|
-| Backend | FastAPI + Uvicorn |
-| Frontend | Streamlit |
+| Component      | Technology               |
+| -------------- | ------------------------ |
+| Backend        | FastAPI + Uvicorn        |
+| Frontend       | Streamlit                |
 | Financial Data | yfinance (Yahoo Finance) |
-| Optimization | SciPy (SLSQP) + NumPy |
-| Visualization | Plotly |
-| Validation | Pydantic |
+| Optimization   | SciPy (SLSQP) + NumPy    |
+| Visualization  | Plotly                   |
+| Validation     | Pydantic                 |
 
 ---
 
@@ -65,13 +65,13 @@ pip install -r requirements.txt
 
 ### Running Locally
 
-**Option A -- Streamlit only** (simplest, same as cloud deployment):
+**Option A -- Streamlit only**:
 
 ```bash
 streamlit run frontend/app.py
 ```
 
-**Option B -- Streamlit + FastAPI** (if you want to use the REST API separately):
+**Option B -- Streamlit + FastAPI** :
 
 ```bash
 # Terminal 1
@@ -82,13 +82,6 @@ streamlit run frontend/app.py
 ```
 
 Then open **http://localhost:8501** in your browser.
-
-### Deploying to Streamlit Cloud
-
-1. Push your repo to GitHub
-2. Go to [share.streamlit.io](https://share.streamlit.io)
-3. Set the **Main file path** to `frontend/app.py`
-4. Deploy -- no separate backend needed, everything runs in one process
 
 ---
 
@@ -112,33 +105,33 @@ Then open **http://localhost:8501** in your browser.
 <details>
 <summary><strong>Portfolio Metrics</strong></summary>
 
-| Metric | Description |
-|--------|-------------|
-| Expected Annual Return | Annualized mean return |
-| Annual Volatility | Standard deviation of returns |
-| Sharpe Ratio | Risk-adjusted return (excess return / volatility) |
-| Sortino Ratio | Penalizes only downside volatility |
-| Max Drawdown | Largest peak-to-trough decline |
-| Calmar Ratio | Return / max drawdown |
-| CVaR 95% | Expected loss in the worst 5% of scenarios |
-| Beta | Market sensitivity vs SPY |
-| Jensen's Alpha | Return above CAPM prediction |
-| Treynor Ratio | Return per unit of systematic risk |
-| Information Ratio | Active return / tracking error |
-| Risk Contribution | Per-stock contribution to total portfolio risk |
+| Metric                 | Description                                       |
+| ---------------------- | ------------------------------------------------- |
+| Expected Annual Return | Annualized mean return                            |
+| Annual Volatility      | Standard deviation of returns                     |
+| Sharpe Ratio           | Risk-adjusted return (excess return / volatility) |
+| Sortino Ratio          | Penalizes only downside volatility                |
+| Max Drawdown           | Largest peak-to-trough decline                    |
+| Calmar Ratio           | Return / max drawdown                             |
+| CVaR 95%               | Expected loss in the worst 5% of scenarios        |
+| Beta                   | Market sensitivity vs SPY                         |
+| Jensen's Alpha         | Return above CAPM prediction                      |
+| Treynor Ratio          | Return per unit of systematic risk                |
+| Information Ratio      | Active return / tracking error                    |
+| Risk Contribution      | Per-stock contribution to total portfolio risk    |
 
 </details>
 
 <details>
 <summary><strong>Simulation Metrics</strong></summary>
 
-| Metric | Description |
-|--------|-------------|
-| VaR 95% | Value at Risk at the 95th percentile |
-| CVaR 95% | Conditional Value at Risk |
-| Probability of Loss | Likelihood of negative returns |
-| Median Drawdown | Median max drawdown across simulations |
-| Extreme Drawdown | 95th percentile drawdown |
+| Metric              | Description                                      |
+| ------------------- | ------------------------------------------------ |
+| VaR 95%             | Value at Risk at the 95th percentile             |
+| CVaR 95%            | Conditional Value at Risk                        |
+| Probability of Loss | Likelihood of negative returns                   |
+| Median Drawdown     | Median max drawdown across simulations           |
+| Extreme Drawdown    | 95th percentile drawdown                         |
 | Final Outcome Range | 1st to 99th percentile of final portfolio values |
 
 </details>
@@ -149,15 +142,15 @@ Then open **http://localhost:8501** in your browser.
 
 The FastAPI backend exposes these endpoints (available when running with Option B):
 
-| Method | Route | Description |
-|--------|-------|-------------|
-| `GET` | `/` | Health check |
-| `GET` | `/api/stocks/` | List stocks (optional filter `?q=`) |
-| `GET` | `/api/stocks/{ticker}/history` | Price history |
-| `POST` | `/api/stocks/analyze` | Individual stock analysis |
-| `POST` | `/api/optimize` | Portfolio optimization with extended metrics |
-| `POST` | `/api/simulate` | Monte Carlo simulation with CVaR and drawdown |
-| `POST` | `/api/backtest` | Historical backtest vs SPY |
+| Method | Route                          | Description                                   |
+| ------ | ------------------------------ | --------------------------------------------- |
+| `GET`  | `/`                            | Health check                                  |
+| `GET`  | `/api/stocks/`                 | List stocks (optional filter `?q=`)           |
+| `GET`  | `/api/stocks/{ticker}/history` | Price history                                 |
+| `POST` | `/api/stocks/analyze`          | Individual stock analysis                     |
+| `POST` | `/api/optimize`                | Portfolio optimization with extended metrics  |
+| `POST` | `/api/simulate`                | Monte Carlo simulation with CVaR and drawdown |
+| `POST` | `/api/backtest`                | Historical backtest vs SPY                    |
 
 ---
 
